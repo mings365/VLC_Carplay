@@ -13,4 +13,6 @@
 
 2026-11-03 私有 CI 首次运行：[run 41479690974](https://github.com/mings365/VLC_Carplay/actions/runs/41479690974)。CocoaPods 安装与 `xcodebuild` arm64 Release 编译通过，日志明确出现 `BUILD SUCCEEDED`；IPA 校验阶段失败，原因是 `lipo -verify_arch` 的参数顺序写反。已修正工作流，待重跑确认完整 IPA。
 
-下一步：重跑 CI 并检查完整 IPA。基线通过后，在独立适配层实现窗口/视频可用性诊断，再决定是否迁移 VLC 的现有渲染视图。
+2026-11-03 私有 CI 第二次运行：[run 41481739294](https://github.com/mings365/VLC_Carplay/actions/runs/41481739294) 完整成功。诊断产物记录 arm64 Mach-O 可执行文件，以及 `VLCKit.framework`、`VLCMediaLibraryKit.framework`；`vlc-ios-unsigned-ipa` 与诊断产物均已上传。Bundle ID 为基线值 `com.example.vlc-ios`。此结果仅证明编译与打包，不证明 TrollStore 安装、CarPlay 视频窗口或真实视频播放。
+
+下一步：在独立适配层实现窗口/视频可用性诊断，再决定是否迁移 VLC 的现有渲染视图。目标 iPhone 的 iOS 版本仍未知。

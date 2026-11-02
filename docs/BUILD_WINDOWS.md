@@ -7,4 +7,4 @@
 3. 构建通过后校验 `.app` 的 `CFBundleExecutable`、Mach-O arm64 和 `Frameworks`，再压成 `Payload/*.app` 的 unsigned IPA。下载 `vlc-ios-unsigned-ipa` 和 `vlc-ios-build-diagnostics`。
 4. 若失败，检查 `packages.log`、`build.log`、`build.xcresult`。构建步骤使用 `pipefail`，失败不会被日志管道掩盖。
 
-unsigned IPA 尚不是可安装的签名包；真实设备测试需单独签名、安装与运行记录。CI 当前只实现构建基线，未有成功运行记录。
+基线构建已在私有仓库的 [Actions run 41481739294](https://github.com/mings365/VLC_Carplay/actions/runs/41481739294) 成功：arm64 Release 编译、可执行文件与 Frameworks 校验、IPA 打包和产物上传均通过。unsigned IPA 尚不是可安装的签名包；真实设备测试需单独签名、安装与运行记录。

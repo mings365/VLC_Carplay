@@ -2,7 +2,7 @@
 
 | 阶段 | 测试 | 当前结果 |
 |---|---|---|
-| A | 检查源码、Scheme、锁文件；运行 CI 原版 arm64 构建，解包核对 `.app`、可执行文件及 Frameworks | 首次 CI 的 `xcodebuild` 成功；IPA 校验脚本的 `lipo` 参数顺序错误，修复后待重跑 |
+| A | 检查源码、Scheme、锁文件；运行 CI 原版 arm64 构建，解包核对 `.app`、可执行文件及 Frameworks | 第二次 CI 成功：arm64 Mach-O、VLCKit、VLCMediaLibraryKit 和 IPA 上传均通过；未做设备启动测试 |
 | B | 分别检查 CarPlay 图标、Scene 连接、窗口尺寸和测试画面；有线/无线断连重连 | 未实施，需设备 |
 | C | 同一 VLC 实例播放 MP4、MKV、M3U8；检查字幕、音轨、音画同步及恢复手机输出 | 未实施，依赖 B |
 | D | 验证媒体列表、进度、队列、轨道与异常恢复 | 未实施 |
