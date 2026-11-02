@@ -89,7 +89,7 @@ jobs:
           test -n "$EXECUTABLE"
           test -s "$APP/$EXECUTABLE"
           file "$APP/$EXECUTABLE" | tee "$ARTIFACT_DIR/executable.txt"
-          xcrun lipo -verify_arch arm64 "$APP/$EXECUTABLE"
+          xcrun lipo "$APP/$EXECUTABLE" -verify_arch arm64
           test -d "$APP/Frameworks"
           find "$APP/Frameworks" -type f \( -name '*.dylib' -o -perm -111 \) -print | tee "$ARTIFACT_DIR/frameworks.txt"
           test -s "$ARTIFACT_DIR/frameworks.txt"
