@@ -8,3 +8,5 @@
 4. 若失败，检查 `packages.log`、`build.log`、`build.xcresult`。构建步骤使用 `pipefail`，失败不会被日志管道掩盖。
 
 基线构建已在私有仓库的 [Actions run 41481739294](https://github.com/mings365/VLC_Carplay/actions/runs/41481739294) 成功：arm64 Release 编译、可执行文件与 Frameworks 校验、IPA 打包和产物上传均通过。unsigned IPA 尚不是可安装的签名包；真实设备测试需单独签名、安装与运行记录。
+
+阶段 B 提供独立的 `Sign CarPlay window probe for TrollStore` 手动工作流。输入一次成功的 unsigned 构建 run ID；它仅重新签名并打包已有 IPA，不重复编译 VLC。产物名为 `vlc-carplay-window-probe-trollstore-ipa`。这个包只验证旧系统窗口探测，不保证安装或视频显示。

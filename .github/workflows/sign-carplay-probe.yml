@@ -1,0 +1,59 @@
+name: Sign CarPlay window probe for TrollStore
+
+on:
+  workflow_dispatch:
+    inputs:
+      source_run_id:
+        description: Successful unsigned iOS build run ID
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  sign-probe:
+    runs-on: macos-26
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download unsigned IPA from successful build
+        uses: actions/download-artifact@v4
+        with:
+          name: vlc-ios-unsigned-ipa
+          run-id: ${{ inputs.source_run_id }}
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          path: ${{ runner.temp }}/unsigned
+
+      - name: Sign isolated window probe
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s "$RUNNER_TEMP/unsigned/VLC-iOS-unsigned.ipa"
+          plutil -lint .github/CarPlayVideoProbe.entitlements
+          if ! command -v ldid >/dev/null; then
+            brew install ldid
+          fi
+          mkdir -p "$RUNNER_TEMP/probe"
+          unzip -q "$RUNNER_TEMP/unsigned/VLC-iOS-unsigned.ipa" -d "$RUNNER_TEMP/probe"
+          APP="$RUNNER_TEMP/probe/Payload/VLC-iOS-no-watch.app"
+          EXECUTABLE=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleExecutable' "$APP/Info.plist")
+          test -s "$APP/$EXECUTABLE"
+          ldid -S.github/CarPlayVideoProbe.entitlements "$APP/$EXECUTABLE"
+          ldid -e "$APP/$EXECUTABLE" > "$RUNNER_TEMP/probe-entitlements.plist"
+          /usr/libexec/PlistBuddy -c 'Print :SBStarkCapable' "$RUNNER_TEMP/probe-entitlements.plist"
+          /usr/libexec/PlistBuddy -c 'Print :com.apple.developer.carplay-audio' "$RUNNER_TEMP/probe-entitlements.plist"
+          file "$APP/$EXECUTABLE"
+          xcrun lipo "$APP/$EXECUTABLE" -verify_arch arm64
+          (cd "$RUNNER_TEMP/probe" && zip -qry "$RUNNER_TEMP/VLC-CarPlay-window-probe-TrollStore.ipa" Payload)
+          unzip -t "$RUNNER_TEMP/VLC-CarPlay-window-probe-TrollStore.ipa" | tail -1
+
+      - name: Upload signed probe IPA
+        uses: actions/upload-artifact@v4
+        with:
+          name: vlc-carplay-window-probe-trollstore-ipa
+          path: ${{ runner.temp }}/VLC-CarPlay-window-probe-TrollStore.ipa
+          if-no-files-found: error

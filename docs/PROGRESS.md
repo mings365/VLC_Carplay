@@ -18,3 +18,5 @@
 下一步：在独立适配层验证窗口/视频可用性，再决定是否迁移 VLC 的现有渲染视图。
 
 2026-11-03：目标 iPhone 为 iOS 16.5.1。已加入独立 `UIWindowSceneSessionRoleCarPlay` 探测 Scene、静态测试视图与生命周期日志；现有音频模板 Scene 加入连接/断开日志。未加入特殊 entitlement，未接入 VLC 渲染，待 CI 与实机确认窗口是否实际可用。
+
+另增独立的 TrollStore 探测包签名工作流，只给主可执行文件写入 audio 与 `SBStarkCapable` 两项 entitlement；该包是否可安装、Scene 是否连接仍待分别测试。
