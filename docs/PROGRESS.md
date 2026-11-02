@@ -20,3 +20,5 @@
 2026-11-03：目标 iPhone 为 iOS 16.5.1。已加入独立 `UIWindowSceneSessionRoleCarPlay` 探测 Scene、静态测试视图与生命周期日志；现有音频模板 Scene 加入连接/断开日志。未加入特殊 entitlement，未接入 VLC 渲染，待 CI 与实机确认窗口是否实际可用。
 
 另增独立的 TrollStore 探测包签名工作流，只给主可执行文件写入 audio 与 `SBStarkCapable` 两项 entitlement；该包是否可安装、Scene 是否连接仍待分别测试。
+
+探测版 [build run 41545593078](https://github.com/mings365/VLC_Carplay/actions/runs/41545593078) 成功；[sign run 41546362321](https://github.com/mings365/VLC_Carplay/actions/runs/41546362321) 成功并上传 `vlc-carplay-window-probe-trollstore-ipa`。签名日志确认两项 entitlement 为 `true`、主可执行文件仍是 arm64 Mach-O、IPA 压缩结构校验通过。实机安装、CarPlay Scene 和静态画面均未验证。
