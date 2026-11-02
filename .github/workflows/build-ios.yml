@@ -1,0 +1,123 @@
+name: Build unsigned VLC for iOS
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/build-ios.yml'
+      - 'Podfile*'
+      - 'VLC.xcodeproj/**'
+      - 'VLC.xcworkspace/**'
+      - 'Sources/**'
+      - 'Resources/**'
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: macos-26
+    timeout-minutes: 120
+    env:
+      SCHEME: VLC-iOS-no-watch
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set build paths
+        shell: bash
+        run: |
+          echo "DERIVED_DATA=$RUNNER_TEMP/VLC-DerivedData" >> "$GITHUB_ENV"
+          echo "ARTIFACT_DIR=$RUNNER_TEMP/VLC-Artifacts" >> "$GITHUB_ENV"
+
+      - name: Select Xcode and inspect tools
+        shell: bash
+        run: |
+          set -euo pipefail
+          xcode-select -p
+          xcodebuild -version
+          xcrun --sdk iphoneos --show-sdk-version
+          ruby --version
+
+      - name: Cache CocoaPods downloads
+        uses: actions/cache@v4
+        with:
+          path: ~/Library/Caches/CocoaPods
+          key: ${{ runner.os }}-cocoapods-1.16.2-${{ hashFiles('Podfile.lock') }}
+          restore-keys: ${{ runner.os }}-cocoapods-1.16.2-
+
+      - name: Install locked CocoaPods dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+          gem install --user-install cocoapods -v 1.16.2 --no-document
+          export PATH="$(ruby -r rubygems -e 'print Gem.user_dir')/bin:$PATH"
+          pod _1.16.2_ --version
+          pod _1.16.2_ install --repo-update --verbose
+          test -f 'Pods/Target Support Files/Pods-VLC-iOS-no-watch/Pods-VLC-iOS-no-watch.release.xcconfig'
+          xcodebuild -list -workspace VLC.xcworkspace
+
+      - name: Build for iPhone arm64
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$ARTIFACT_DIR"
+          xcodebuild -resolvePackageDependencies \
+            -workspace VLC.xcworkspace \
+            -scheme "$SCHEME" \
+            -derivedDataPath "$DERIVED_DATA" \
+            2>&1 | tee "$ARTIFACT_DIR/packages.log"
+          xcodebuild build \
+            -workspace VLC.xcworkspace \
+            -scheme "$SCHEME" \
+            -configuration Release \
+            -destination 'generic/platform=iOS' \
+            -sdk iphoneos \
+            -derivedDataPath "$DERIVED_DATA" \
+            -resultBundlePath "$ARTIFACT_DIR/build.xcresult" \
+            ARCHS=arm64 ONLY_ACTIVE_ARCH=NO \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO \
+            COMPILER_INDEX_STORE_ENABLE=NO \
+            2>&1 | tee "$ARTIFACT_DIR/build.log"
+
+      - name: Validate and package unsigned IPA
+        shell: bash
+        run: |
+          set -euo pipefail
+          APP="$DERIVED_DATA/Build/Products/Release-iphoneos/VLC-iOS-no-watch.app"
+          test -d "$APP"
+          EXECUTABLE=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleExecutable' "$APP/Info.plist")
+          test -n "$EXECUTABLE"
+          test -s "$APP/$EXECUTABLE"
+          file "$APP/$EXECUTABLE" | tee "$ARTIFACT_DIR/executable.txt"
+          xcrun lipo -verify_arch arm64 "$APP/$EXECUTABLE"
+          test -d "$APP/Frameworks"
+          find "$APP/Frameworks" -type f \( -name '*.dylib' -o -perm -111 \) -print | tee "$ARTIFACT_DIR/frameworks.txt"
+          test -s "$ARTIFACT_DIR/frameworks.txt"
+          /usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$APP/Info.plist" | tee "$ARTIFACT_DIR/bundle-id.txt"
+          mkdir -p "$ARTIFACT_DIR/Payload"
+          cp -R "$APP" "$ARTIFACT_DIR/Payload/"
+          (cd "$ARTIFACT_DIR" && zip -qry VLC-iOS-unsigned.ipa Payload)
+          unzip -t "$ARTIFACT_DIR/VLC-iOS-unsigned.ipa" | tail -1
+          du -h "$ARTIFACT_DIR/VLC-iOS-unsigned.ipa"
+
+      - name: Upload build diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: vlc-ios-build-diagnostics
+          path: |
+            ${{ runner.temp }}/VLC-Artifacts/build.log
+            ${{ runner.temp }}/VLC-Artifacts/packages.log
+            ${{ runner.temp }}/VLC-Artifacts/build.xcresult
+            ${{ runner.temp }}/VLC-Artifacts/executable.txt
+            ${{ runner.temp }}/VLC-Artifacts/frameworks.txt
+            ${{ runner.temp }}/VLC-Artifacts/bundle-id.txt
+          if-no-files-found: warn
+
+      - name: Upload unsigned IPA
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: vlc-ios-unsigned-ipa
+          path: ${{ runner.temp }}/VLC-Artifacts/VLC-iOS-unsigned.ipa
+          if-no-files-found: error
