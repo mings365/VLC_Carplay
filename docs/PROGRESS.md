@@ -15,4 +15,6 @@
 
 2026-11-03 私有 CI 第二次运行：[run 41481739294](https://github.com/mings365/VLC_Carplay/actions/runs/41481739294) 完整成功。诊断产物记录 arm64 Mach-O 可执行文件，以及 `VLCKit.framework`、`VLCMediaLibraryKit.framework`；`vlc-ios-unsigned-ipa` 与诊断产物均已上传。Bundle ID 为基线值 `com.example.vlc-ios`。此结果仅证明编译与打包，不证明 TrollStore 安装、CarPlay 视频窗口或真实视频播放。
 
-下一步：在独立适配层实现窗口/视频可用性诊断，再决定是否迁移 VLC 的现有渲染视图。目标 iPhone 的 iOS 版本仍未知。
+下一步：在独立适配层验证窗口/视频可用性，再决定是否迁移 VLC 的现有渲染视图。
+
+2026-11-03：目标 iPhone 为 iOS 16.5.1。已加入独立 `UIWindowSceneSessionRoleCarPlay` 探测 Scene、静态测试视图与生命周期日志；现有音频模板 Scene 加入连接/断开日志。未加入特殊 entitlement，未接入 VLC 渲染，待 CI 与实机确认窗口是否实际可用。

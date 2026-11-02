@@ -1073,6 +1073,7 @@
 		7DA5150C2EF82B63000C9995 /* SliderInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597B403E2625E85000C0D81E /* SliderInfoView.swift */; };
 		7DA5150D2EF82B63000C9995 /* VLCMLMedia+App.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D9BF3102991947400B68FEC /* VLCMLMedia+App.m */; };
 		7DA5150E2EF82B63000C9995 /* VLCCarPlaySceneDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DD71F9B28FB425A00327ACE /* VLCCarPlaySceneDelegate.m */; };
+		CA11A0000000000000000003 /* VLCCarPlayVideoSceneDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = CA11A0000000000000000001 /* VLCCarPlayVideoSceneDelegate.m */; };
 		7DA515102EF82B63000C9995 /* VLCNowPlayingTemplateObserver.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D4556AB29192F5400276567 /* VLCNowPlayingTemplateObserver.m */; };
 		7DA515112EF82B63000C9995 /* URL+isHidden.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DC7BABA28C8959F00109F28 /* URL+isHidden.swift */; };
 		7DA515122EF82B63000C9995 /* PlaylistViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41EB6633216147DD00FDC38B /* PlaylistViewController.swift */; };
@@ -1347,6 +1348,7 @@
 		7DD71F9828FB421300327ACE /* VLCCarPlayArtistsController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DD71F8D28FB421300327ACE /* VLCCarPlayArtistsController.m */; };
 		7DD71F9928FB421300327ACE /* CPListTemplate+Genres.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DD71F9028FB421300327ACE /* CPListTemplate+Genres.m */; };
 		7DD71F9C28FB425A00327ACE /* VLCCarPlaySceneDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DD71F9B28FB425A00327ACE /* VLCCarPlaySceneDelegate.m */; };
+		CA11A0000000000000000004 /* VLCCarPlayVideoSceneDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = CA11A0000000000000000001 /* VLCCarPlayVideoSceneDelegate.m */; };
 		7DD9CD5E24223B1300D0324F /* VLCPlaybackInfoSubtitlesFetcherViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DEBF3771C075EBC007A4043 /* VLCPlaybackInfoSubtitlesFetcherViewController.m */; };
 		7DDA303D2AF53AF400F96BB8 /* VLCDonationPayPalViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DDA303C2AF53AF400F96BB8 /* VLCDonationPayPalViewController.m */; };
 		7DDA30412AF54E8900F96BB8 /* VLCDonationCreditCardViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7DDA303F2AF54E8900F96BB8 /* VLCDonationCreditCardViewController.m */; };
@@ -2505,6 +2507,7 @@
 		7DD71F9028FB421300327ACE /* CPListTemplate+Genres.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "CPListTemplate+Genres.m"; sourceTree = "<group>"; };
 		7DD71F9328FB421300327ACE /* VLCCarPlayArtistsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VLCCarPlayArtistsController.h; sourceTree = "<group>"; };
 		7DD71F9B28FB425A00327ACE /* VLCCarPlaySceneDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VLCCarPlaySceneDelegate.m; sourceTree = "<group>"; };
+		CA11A0000000000000000001 /* VLCCarPlayVideoSceneDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VLCCarPlayVideoSceneDelegate.m; sourceTree = "<group>"; };
 		7DDA303B2AF53AF400F96BB8 /* VLCDonationPayPalViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VLCDonationPayPalViewController.h; sourceTree = "<group>"; };
 		7DDA303C2AF53AF400F96BB8 /* VLCDonationPayPalViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VLCDonationPayPalViewController.m; sourceTree = "<group>"; };
 		7DDA303E2AF54E8900F96BB8 /* VLCDonationCreditCardViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VLCDonationCreditCardViewController.h; sourceTree = "<group>"; };
@@ -4740,6 +4743,7 @@
 				7DD71F8928FB421300327ACE /* VLCCarPlayPlaylistsController.m */,
 				7DD71F8F28FB421300327ACE /* VLCCarPlaySceneDelegate.h */,
 				7DD71F9B28FB425A00327ACE /* VLCCarPlaySceneDelegate.m */,
+				CA11A0000000000000000001 /* VLCCarPlayVideoSceneDelegate.m */,
 				7D4556AA29192F5400276567 /* VLCNowPlayingTemplateObserver.h */,
 				7D4556AB29192F5400276567 /* VLCNowPlayingTemplateObserver.m */,
 				7DD3235830013CA100C9A583 /* VLCCarPlayFoldersController.h */,
@@ -6739,6 +6743,7 @@
 				597B403F2625E85000C0D81E /* SliderInfoView.swift in Sources */,
 				7D9BF3112991947400B68FEC /* VLCMLMedia+App.m in Sources */,
 				7DD71F9C28FB425A00327ACE /* VLCCarPlaySceneDelegate.m in Sources */,
+				CA11A0000000000000000004 /* VLCCarPlayVideoSceneDelegate.m in Sources */,
 				7D4556AC29192F5400276567 /* VLCNowPlayingTemplateObserver.m in Sources */,
 				7DC7BABC28C8959F00109F28 /* URL+isHidden.swift in Sources */,
 				41EB6634216147DD00FDC38B /* PlaylistViewController.swift in Sources */,
@@ -7121,6 +7126,7 @@
 				7DA5150D2EF82B63000C9995 /* VLCMLMedia+App.m in Sources */,
 				7DC27EA0305686B200D33BEE /* PlaybackDelayView.swift in Sources */,
 				7DA5150E2EF82B63000C9995 /* VLCCarPlaySceneDelegate.m in Sources */,
+				CA11A0000000000000000003 /* VLCCarPlayVideoSceneDelegate.m in Sources */,
 				7DA515102EF82B63000C9995 /* VLCNowPlayingTemplateObserver.m in Sources */,
 				7DA515112EF82B63000C9995 /* URL+isHidden.swift in Sources */,
 				7DA515122EF82B63000C9995 /* PlaylistViewController.swift in Sources */,

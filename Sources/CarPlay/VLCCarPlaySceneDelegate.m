@@ -45,6 +45,7 @@
 - (void)templateApplicationScene:(CPTemplateApplicationScene *)templateApplicationScene
    didConnectInterfaceController:(CPInterfaceController *)interfaceController
 {
+    NSLog(@"VLC CarPlay audio template scene connected");
     _interfaceController = interfaceController;
     _mediaLibraryObserver = [[CarPlayMediaLibraryObserver alloc] init];
     _mediaLibraryObserver.observerDelegate = self;
@@ -69,6 +70,7 @@
 - (void)templateApplicationScene:(CPTemplateApplicationScene *)templateApplicationScene
 didDisconnectInterfaceController:(CPInterfaceController *)interfaceController
 {
+    NSLog(@"VLC CarPlay audio template scene disconnected");
     _interfaceController = nil;
     [_mediaLibraryObserver unobserveLibrary];
     _mediaLibraryObserver = nil;

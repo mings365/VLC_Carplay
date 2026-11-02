@@ -30,9 +30,14 @@
 
 当前优先级：先完成 A 的构建基线与共享播放服务审计；随后建立独立能力探测层，分别验证 B/C 的 Scene 与窗口。没有窗口实测前不迁移真实视频渲染，也不添加臆测的私有 API。
 
+目标 iPhone 已确认为 **iOS 16.5.1**。因此苹果在 iOS 27 引入的官方视频应用类别不适用于这台设备；后续窗口探测应针对旧系统实验路径独立进行，不能把 CarTube 在 iOS 14–15.4.1 的公开支持结论外推到 16.5.1。
+
+阶段 B 已在 VLC 的 `Info.plist` 增加独立的 `UIWindowSceneSessionRoleCarPlay` 配置，并用 `VLCCarPlayVideoSceneDelegate` 记录 Scene 连接、窗口尺寸、测试视图绑定和断开。此代码没有加入特殊 entitlement，也没有启动视频；它只能探测系统在现有签名与配置下是否提供窗口。若 Scene 未连接，下一步需分别检查签名后 entitlement 和系统分派，不能据此认定 VLC 渲染失败。
+
 ## TrollStore
 
-[TrollStore 源码](https://github.com/opa334/TrollStore)的安装和重签流程会处理 entitlement，但“IPA 可安装”、“CarPlay 图标出现”、“视频 Scene 创建”、“真实视频帧显示”是四个独立验收点。其版本支持范围和设备组合应按目标 iPhone 的系统版本核对；未取得该版本，故不声称本构建可安装。
+[TrollStore 源码](https://github.com/opa334/TrollStore)的安装和重签流程会处理 entitlement，但“IPA 可安装”、“CarPlay 图标出现”、“视频 Scene 创建”、“真实视频帧显示”是四个独立验收点。仍须对目标 iPhone 和具体 IPA 分别测试。
+[TrollStore README](https://github.com/opa334/TrollStore/blob/main/README.md)列出的支持版本包含 iOS 16.5.1；这只确认系统版本在范围内，不能替代具体 IPA 的安装与权限测试。
 
 ## CarMovie
 

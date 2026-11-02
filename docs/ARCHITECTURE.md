@@ -19,4 +19,4 @@
 
 ## 后续边界
 
-先让未改动的 VLC 源码在 CI 编译，再加入独立的视频显示能力探测。音频模板 Scene 与视频窗口 Scene 必须保持独立；只在系统实际提供合法窗口和视频可用状态时迁移现有渲染目标。不得仅以 entitlement 或外接屏存在作为视频可用的证明。
+原版 VLC 基线已在 CI 编译通过。阶段 B 新增 `Sources/CarPlay/VLCCarPlayVideoSceneDelegate.m`：它对应 `UIWindowSceneSessionRoleCarPlay`，只在系统真正连接该 Scene 时创建测试窗口并记录窗口尺寸；现有 `CPTemplateApplicationSceneSessionRoleApplication` 音频模板仍由原 delegate 管理。测试窗口不接入播放器，也不显示视频。只有设备确认窗口和系统视频可用状态后才迁移现有渲染目标；不得仅以 entitlement 或外接屏存在作为视频可用的证明。
