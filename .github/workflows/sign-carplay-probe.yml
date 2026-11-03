@@ -57,3 +57,31 @@ jobs:
           name: vlc-carplay-window-probe-trollstore-ipa
           path: ${{ runner.temp }}/VLC-CarPlay-window-probe-TrollStore.ipa
           if-no-files-found: error
+
+      - name: Sign window-only comparison probe
+        shell: bash
+        run: |
+          set -euo pipefail
+          plutil -lint .github/CarPlayWindowOnlyProbe.entitlements
+          mkdir -p "$RUNNER_TEMP/window-only"
+          unzip -q "$RUNNER_TEMP/unsigned/VLC-iOS-unsigned.ipa" -d "$RUNNER_TEMP/window-only"
+          APP="$RUNNER_TEMP/window-only/Payload/VLC-iOS-no-watch.app"
+          EXECUTABLE=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleExecutable' "$APP/Info.plist")
+          ldid -S.github/CarPlayWindowOnlyProbe.entitlements "$APP/$EXECUTABLE"
+          ldid -e "$APP/$EXECUTABLE" > "$RUNNER_TEMP/window-only-entitlements.plist"
+          /usr/libexec/PlistBuddy -c 'Print :SBStarkCapable' "$RUNNER_TEMP/window-only-entitlements.plist"
+          if /usr/libexec/PlistBuddy -c 'Print :com.apple.developer.carplay-audio' "$RUNNER_TEMP/window-only-entitlements.plist" >/dev/null 2>&1; then
+            echo 'Unexpected CarPlay audio entitlement in window-only probe' >&2
+            exit 1
+          fi
+          file "$APP/$EXECUTABLE"
+          xcrun lipo "$APP/$EXECUTABLE" -verify_arch arm64
+          (cd "$RUNNER_TEMP/window-only" && zip -qry "$RUNNER_TEMP/VLC-CarPlay-window-only-probe-TrollStore.ipa" Payload)
+          unzip -t "$RUNNER_TEMP/VLC-CarPlay-window-only-probe-TrollStore.ipa" | tail -1
+
+      - name: Upload window-only comparison IPA
+        uses: actions/upload-artifact@v4
+        with:
+          name: vlc-carplay-window-only-probe-trollstore-ipa
+          path: ${{ runner.temp }}/VLC-CarPlay-window-only-probe-TrollStore.ipa
+          if-no-files-found: error

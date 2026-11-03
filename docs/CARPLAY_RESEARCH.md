@@ -34,6 +34,8 @@
 
 阶段 B 已在 VLC 的 `Info.plist` 增加独立的 `UIWindowSceneSessionRoleCarPlay` 配置，并用 `VLCCarPlayVideoSceneDelegate` 记录 Scene 连接、窗口尺寸、测试视图绑定和断开。此代码没有加入特殊 entitlement，也没有启动视频；它只能探测系统在现有签名与配置下是否提供窗口。若 Scene 未连接，下一步需分别检查签名后 entitlement 和系统分派，不能据此认定 VLC 渲染失败。
 
+首个实机探测包同时包含 audio 与 `SBStarkCapable` 两项权限。车机照片显示系统打开的是 VLC 原有音频模板；这说明应用入口有效，但无法证明新 `UIWindowSceneSessionRoleCarPlay` 已被连接。下一轮在同一份 unsigned IPA 上签出两种对照包：audio+Stark 与仅 Stark；比较系统如何选择 Scene。仅 Stark 包是实验品，不代表最终应用会移除音频功能。
+
 ## TrollStore
 
 [TrollStore 源码](https://github.com/opa334/TrollStore)的安装和重签流程会处理 entitlement，但“IPA 可安装”、“CarPlay 图标出现”、“视频 Scene 创建”、“真实视频帧显示”是四个独立验收点。仍须对目标 iPhone 和具体 IPA 分别测试。
