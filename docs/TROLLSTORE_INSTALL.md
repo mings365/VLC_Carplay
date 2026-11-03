@@ -1,17 +1,11 @@
-# TrollStore 实机测试
+# TrollStore 安装与实机测试
 
-目标设备为 iOS 16.5.1。**不要安装 `build-ios.yml` 运行中的 `vlc-ios-unsigned-ipa`**：它是供签名工作流使用的中间产物，没有 `SBStarkCapable`，车机上可能没有 VLC 入口。
+1. 从[功能包签名运行 41589300332](https://github.com/mings365/VLC_Carplay/actions/runs/41589300332) 下载 `vlc-carplay-trollstore-ipa`，解压外层 ZIP，得到 `VLC-CarPlay-TrollStore.ipa`。
+2. 用 TrollStore 安装 IPA。在 iPhone 上打开 **VLC CarPlay**，确认原有 VLC 媒体库和播放界面正常。安装新包会替换同 Bundle ID `com.example.vlc-ios` 的旧探测包。
+3. 车辆驻车时，在 iPhone VLC CarPlay 选择并开始播放视频；连接车机，打开 VLC CarPlay，点“已驻车 · 开始显示”。
+4. 车机控制栏可播放/暂停、切换队列项目、跳转进度、循环选择已有字幕和音轨、停止显示。轻点画面隐藏或唤出控制栏。
+5. 检查手机熄屏、CarPlay 断开及重连后的表现。出错时从 iPhone“文件”App →“我的 iPhone”→ VLC 导出新的 `CarPlayProbe.log`；只分享该日志与车机照片，不要导出私人媒体库。
 
-本实验包目前依赖 TrollStore 保留 `SBStarkCapable`。普通 Apple ID 侧载可以安装某些 VLC 构建，但不能据此期待该 iOS 16.5.1 非官方 CarPlay 窗口路径可用。Apple 常规 CarPlay 类别权限须获批并纳入描述文件；官方 CarPlay 视频类别属于较新系统和支持视频的车辆，不能替代本机的旧版实验路径。
+**不要安装 `build-ios.yml` 中的 `vlc-ios-unsigned-ipa`。**它仅供签名工作流使用，没有已验证的 CarPlay 窗口权限；用户曾安装此包后车机 VLC 图标消失。
 
-当前视频输出实验包来自[签名运行 41586471716](https://github.com/mings365/VLC_Carplay/actions/runs/41586471716)。在 Artifacts 中下载 `vlc-carplay-window-only-probe-trollstore-ipa`，解压外层 ZIP，得到 `VLC-CarPlay-window-only-probe-TrollStore.ipa`。此包含 `SBStarkCapable`，沿用已通过实机验证的独立 CarPlay 窗口路径。**真实视频帧尚未经实机验证。**
-
-1. 用 TrollStore 安装 IPA，在 iPhone 启动 VLC，确认原有界面正常。
-2. 车辆驻车时，用 iPhone VLC 选择并开始播放一个本地视频。保持 iPhone 解锁、亮屏。
-3. 连接 CarPlay，在车机打开 VLC，点“已驻车 · 开始显示”。观察能否显示视频帧、字幕和声音；拍摄车机画面。
-4. 从 iPhone“文件”App →“我的 iPhone”→ VLC 导出 `CarPlayProbe.log`。如果没有日志，也记录这一点。
-5. 断开 CarPlay，检查视频能否返回手机显示，再重连并记录结果。
-
-同一次签名运行还提供 `vlc-carplay-window-probe-trollstore-ipa`，含 CarPlay audio 与 `SBStarkCapable` 两项权限。它可能进入原有音频模板，适合作对照。两个包的 Bundle ID 都是 `com.example.vlc-ios`，安装后一个会替换前一个。源码中的原有 CarPlay 音频功能仍保留。
-
-“已驻车”按钮是人工确认，并非自动车辆运动状态检测。此版本仅用于驻车实验；窗口停用或断开时会解绑视频输出。不修改车辆状态或安全联锁。请只分享车机照片、探测日志和必要的安装错误，不要分享完整媒体路径或私人媒体库。
+此 iOS 16.5.1 实验路径依赖 TrollStore 保留 `SBStarkCapable`；普通 Apple ID 侧载不可视为可用。按钮是人工驻车确认，不是自动车辆运动状态检测；不修改车辆状态或安全联锁。视频和声音在上一版经用户实机验证，本版新增控制、字幕和断开回退仍待验收。[功能与限制](FUNCTIONAL_BUILD.md)。

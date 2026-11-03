@@ -14,10 +14,11 @@
 
 ## 构建与安装
 
-1. 等待 `build-ios.yml` 的 macOS arm64 构建成功。其 `vlc-ios-unsigned-ipa` 只是签名输入，**不要安装**。
-2. 用该构建运行 ID 手动启动 `sign-carplay-video.yml`。签名工作流确认源构建成功且 Git 提交一致，再用 `SBStarkCapable` 给主程序签名并检查 IPA。
-3. 从签名运行的 `vlc-carplay-trollstore-ipa` artifact 下载 ZIP，解压得到 `VLC-CarPlay-TrollStore.ipa`，通过 TrollStore 安装。
-4. 在 iPhone VLC 中选择并播放视频；驻车连接 CarPlay，打开 VLC CarPlay，点击“已驻车 · 开始显示”。
+1. 打开[功能包签名运行 41589300332](https://github.com/mings365/VLC_Carplay/actions/runs/41589300332)，下载 `vlc-carplay-trollstore-ipa` artifact。解压 ZIP，得到 `VLC-CarPlay-TrollStore.ipa`，通过 TrollStore 安装。
+2. 该包来自成功的 [arm64 构建运行 41588800639](https://github.com/mings365/VLC_Carplay/actions/runs/41588800639)。构建运行中的 `vlc-ios-unsigned-ipa` 只是签名输入，**不要安装**。签名工作流已确认源构建成功且 Git 提交一致，并检查 `SBStarkCapable`、arm64 与 IPA 结构。
+3. 在 iPhone VLC 中选择并播放视频；驻车连接 CarPlay，打开 VLC CarPlay，点击“已驻车 · 开始显示”。
+
+本地下载校验：外层 ZIP 与内层 IPA 完整；IPA SHA-256 为 `cda0b6cac070bc82ea0db0b37225f57654b29ea6c8af968abce6eb290615f806`，显示名为 `VLC CarPlay`，Bundle ID 为 `com.example.vlc-ios`，包含 arm64 可执行文件及 VLCKit。此校验不代替新增控制功能的实机测试。
 
 ## 限制
 

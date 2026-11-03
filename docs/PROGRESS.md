@@ -36,3 +36,5 @@
 用户报告安装签名视频实验包后，CarPlay 车机**可以播放视频**。这确认至少一条 VLC 视频渲染路径在 iOS 16.5.1 实机上可用。用户本次附带的 `D:\CarPlayProbe.log` 仍是旧静态探针日志（最后事件为 02:53:38Z 的 `video scene disconnected`，没有新版 `video output attach requested`），因此该文件无法验证本次播放绑定、声音或断开恢复；这些仍待新日志与实机结果确认。不得把用户报告扩展成字幕、音轨、协议、行驶状态或原 CarPlay 音频功能已验证。
 
 用户补充确认：视频画面和声音均正常，iPhone 熄屏后仍继续播放；断开 CarPlay 后能否返回手机尚未测试。当前签名包依赖 TrollStore 保留 `SBStarkCapable`；普通 Apple ID 侧载和未装 TrollStore 的 iPhone 尚无可用的此旧版窗口安装路径。unsigned 包失去车机入口是本机对照观察，不等同于穷尽所有其他系统/签名方式。
+
+功能试用版新增车机进度跳转、上一项/下一项、播放暂停、字幕与音轨循环切换、隐藏控制栏和主动停止显示，iPhone 应用显示名改为 `VLC CarPlay`。独立 [build run 41588800639](https://github.com/mings365/VLC_Carplay/actions/runs/41588800639) 和 [sign run 41589300332](https://github.com/mings365/VLC_Carplay/actions/runs/41589300332) 均成功；本地复检最终 IPA 完整、arm64、包含 VLCKit、显示名与 CarPlay Scene 正确。新增控制功能和断开回退待实机验收。
