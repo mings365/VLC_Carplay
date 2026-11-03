@@ -38,3 +38,5 @@
 用户补充确认：视频画面和声音均正常，iPhone 熄屏后仍继续播放；断开 CarPlay 后能否返回手机尚未测试。当前签名包依赖 TrollStore 保留 `SBStarkCapable`；普通 Apple ID 侧载和未装 TrollStore 的 iPhone 尚无可用的此旧版窗口安装路径。unsigned 包失去车机入口是本机对照观察，不等同于穷尽所有其他系统/签名方式。
 
 功能试用版新增车机进度跳转、上一项/下一项、播放暂停、字幕与音轨循环切换、隐藏控制栏和主动停止显示，iPhone 应用显示名改为 `VLC CarPlay`。独立 [build run 41588800639](https://github.com/mings365/VLC_Carplay/actions/runs/41588800639) 和 [sign run 41589300332](https://github.com/mings365/VLC_Carplay/actions/runs/41589300332) 均成功；本地复检最终 IPA 完整、arm64、包含 VLCKit、显示名与 CarPlay Scene 正确。新增控制功能和断开回退待实机验收。
+
+用户提供功能版实机照片：车机正常显示视频帧、进度条、当前/总时间及控制按钮，但控制条播放时持续覆盖画面。为此改为播放 5 秒后自动隐藏进度和按钮，暂停与拖动进度时保持可见；轻点画面手动切换可见状态。点击识别移到场景根视图，并过滤控制按钮和滑块触摸，避免被 VLC 视频子视图拦截或误触控制。等待新 CI 与实机验证。

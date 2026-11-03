@@ -11,7 +11,7 @@
 #import "VLCPlaybackService.h"
 #import "VLCCarPlayProbeDiagnostics.h"
 
-@interface VLCCarPlayVideoSceneDelegate : UIResponder <UIWindowSceneDelegate>
+@interface VLCCarPlayVideoSceneDelegate : UIResponder <UIWindowSceneDelegate, UIGestureRecognizerDelegate>
 
 @property (nonatomic, strong) UIWindow *window;
 @property (nonatomic, strong) UIView *videoSurface;
@@ -27,10 +27,14 @@
 @property (nonatomic, strong) UILabel *durationLabel;
 @property (nonatomic, assign) BOOL displayEnabled;
 @property (nonatomic, assign) BOOL seeking;
+@property (nonatomic, strong) NSTimer *controlsHideTimer;
 
 - (void)updatePlaybackState;
 - (void)updateTrackButtonsWithPlayback:(VLCPlaybackService *)playback;
 - (void)updateProgress;
+- (void)showControls;
+- (void)scheduleControlsHide;
+- (void)cancelControlsHide;
 
 @end
 
@@ -58,7 +62,9 @@ willConnectToSession:(UISceneSession *)session
     self.videoSurface.clipsToBounds = YES;
     self.videoSurface.translatesAutoresizingMaskIntoConstraints = NO;
     UITapGestureRecognizer *toggleControlsTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(toggleControls:)];
-    [self.videoSurface addGestureRecognizer:toggleControlsTap];
+    toggleControlsTap.delegate = self;
+    toggleControlsTap.cancelsTouchesInView = NO;
+    [controller.view addGestureRecognizer:toggleControlsTap];
     [controller.view addSubview:self.videoSurface];
 
     self.statusLabel = [UILabel new];
@@ -184,8 +190,7 @@ willConnectToSession:(UISceneSession *)session
 {
     self.displayEnabled = YES;
     self.enableButton.hidden = YES;
-    self.controls.hidden = NO;
-    self.progressRow.hidden = NO;
+    [self showControls];
     [VLCPlaybackService sharedInstance].carPlayVideoOutputView = self.videoSurface;
     VLCCarPlayProbeRecord(@"video output attach requested");
     [self updatePlaybackState];
@@ -193,6 +198,7 @@ willConnectToSession:(UISceneSession *)session
 
 - (void)stopVideoOutput:(UIButton *)sender
 {
+    [self cancelControlsHide];
     [VLCPlaybackService sharedInstance].carPlayVideoOutputView = nil;
     self.displayEnabled = NO;
     self.enableButton.hidden = NO;
@@ -205,11 +211,64 @@ willConnectToSession:(UISceneSession *)session
 
 - (void)toggleControls:(UITapGestureRecognizer *)recognizer
 {
-    if (!self.displayEnabled) {
+    if (!self.displayEnabled || recognizer.state != UIGestureRecognizerStateEnded) {
         return;
     }
-    self.controls.hidden = !self.controls.hidden;
-    self.progressRow.hidden = self.controls.hidden;
+    if (self.controls.hidden) {
+        [self showControls];
+        VLCCarPlayProbeRecord(@"video controls shown by tap");
+    } else {
+        [self cancelControlsHide];
+        self.controls.hidden = YES;
+        self.progressRow.hidden = YES;
+        VLCCarPlayProbeRecord(@"video controls hidden by tap");
+    }
+}
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch
+{
+    for (UIView *view = touch.view; view != nil; view = view.superview) {
+        if ([view isKindOfClass:[UIControl class]]) {
+            return NO;
+        }
+    }
+    return YES;
+}
+
+- (void)showControls
+{
+    self.controls.hidden = NO;
+    self.progressRow.hidden = NO;
+    [self scheduleControlsHide];
+}
+
+- (void)cancelControlsHide
+{
+    [self.controlsHideTimer invalidate];
+    self.controlsHideTimer = nil;
+}
+
+- (void)scheduleControlsHide
+{
+    [self cancelControlsHide];
+    if (!self.displayEnabled || self.seeking || self.controls.hidden || ![VLCPlaybackService sharedInstance].isPlaying) {
+        return;
+    }
+    self.controlsHideTimer = [NSTimer scheduledTimerWithTimeInterval:5.0
+                                                             target:self
+                                                           selector:@selector(hideControlsAfterDelay:)
+                                                           userInfo:nil
+                                                            repeats:NO];
+}
+
+- (void)hideControlsAfterDelay:(NSTimer *)timer
+{
+    self.controlsHideTimer = nil;
+    if (self.displayEnabled && !self.seeking && [VLCPlaybackService sharedInstance].isPlaying) {
+        self.controls.hidden = YES;
+        self.progressRow.hidden = YES;
+        VLCCarPlayProbeRecord(@"video controls hidden after timeout");
+    }
 }
 
 - (void)playbackStateChanged:(NSNotification *)notification
@@ -237,6 +296,12 @@ willConnectToSession:(UISceneSession *)session
     }
     self.statusLabel.hidden = playback.isPlaying;
     self.statusLabel.text = playback.currentlyPlayingMedia ? @"视频已暂停" : @"请在手机 VLC 中选择视频";
+    if (playback.isPlaying) {
+        [self scheduleControlsHide];
+    } else {
+        [self cancelControlsHide];
+        [self showControls];
+    }
     [self.playPauseButton setTitle:playback.isPlaying ? @"暂停" : @"播放" forState:UIControlStateNormal];
     [self updateTrackButtonsWithPlayback:playback];
     [self updateProgress];
@@ -276,6 +341,7 @@ willConnectToSession:(UISceneSession *)session
 
 - (void)beginSeeking:(UISlider *)slider
 {
+    [self cancelControlsHide];
     self.seeking = YES;
 }
 
@@ -294,6 +360,7 @@ willConnectToSession:(UISceneSession *)session
         VLCCarPlayProbeRecord(@"video seek requested");
     }
     [self updateProgress];
+    [self scheduleControlsHide];
 }
 
 - (void)nextSubtitle:(UIButton *)sender
@@ -359,6 +426,7 @@ willConnectToSession:(UISceneSession *)session
 
 - (void)sceneDidDisconnect:(UIScene *)scene
 {
+    [self cancelControlsHide];
     [VLCPlaybackService sharedInstance].carPlayVideoOutputView = nil;
     VLCCarPlayProbeRecord(@"video output detach requested on disconnect");
     [[NSNotificationCenter defaultCenter] removeObserver:self];
