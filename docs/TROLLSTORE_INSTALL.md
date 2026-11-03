@@ -1,26 +1,19 @@
-# TrollStore 安装测试
+# TrollStore 实机探测
 
-目标系统为 iOS 16.5.1，处于 [TrollStore 官方支持范围](https://github.com/opa334/TrollStore/blob/main/README.md)。记录 iPhone 型号、TrollStore 版本和安装失败时的原始错误。勿把 unsigned IPA 直接视为已可安装。
+目标设备为 iOS 16.5.1。最新的两个探测包来自[签名运行 41555816429](https://github.com/mings365/VLC_Carplay/actions/runs/41555816429)，均已在 CI 中完成签名和 IPA 完整性检查。它们只用于确认 CarPlay 窗口是否被系统创建，**尚不包含视频播放**。
 
-阶段 B 的 `sign-carplay-probe.yml` 从成功的 unsigned 构建运行下载 IPA，用 `ldid` 将 `.github/CarPlayVideoProbe.entitlements` 写入主可执行文件，再上传独立的 `VLC-CarPlay-window-probe-TrollStore.ipa`。该实验权限只有现有 CarPlay audio 与 CarTube 使用的 `SBStarkCapable`；不包含无沙盒或平台应用权限。它用于测试安装、图标和静态窗口 Scene，**不包含 CarPlay 视频播放**。签名命令通过只证明 entitlement 已写入，不证明 iOS 会接受权限或创建窗口。
+| 外层 ZIP | 解压后的 IPA | 主程序实验权限 |
+| --- | --- | --- |
+| `vlc-carplay-window-only-probe-trollstore-ipa.zip` | `VLC-CarPlay-window-only-probe-TrollStore.ipa` | `SBStarkCapable` |
+| `vlc-carplay-window-probe-trollstore-ipa.zip` | `VLC-CarPlay-window-probe-TrollStore.ipa` | CarPlay audio、`SBStarkCapable` |
 
-已在 [签名运行 41546362321](https://github.com/mings365/VLC_Carplay/actions/runs/41546362321) 生成探测包。进入该私有 Actions 运行页面，在 Artifacts 下载 `vlc-carplay-window-probe-trollstore-ipa`，解压外层 ZIP 后得到 IPA。仅在车辆驻车时测试：
+两包的 Bundle ID 都是 `com.example.vlc-ios`，一次只能安装一个。源码中的音频 CarPlay 功能仍保留；仅窗口权限包用于比较系统对两种权限组合的分派结果。
 
-后续签名运行会额外提供 `vlc-carplay-window-only-probe-trollstore-ipa`：它只含 `SBStarkCapable`，用于比较系统是否因 audio 权限而始终选择音频模板。两个包的 Bundle ID 相同，安装第二个会替换前一个探测包；请分别记录测试结果。最终 VLC 音频支持没有从源代码移除。
+1. 先解压 **window-only** ZIP，通过 TrollStore 安装其中的 IPA；在 iPhone 上打开 VLC，确认应用能启动。
+2. 车辆驻车、iPhone 解锁且屏幕点亮时连接 CarPlay，从车机打开 VLC。拍摄车机画面，记录图标是否出现，以及是否看到深蓝底白字 `VLC CARPLAY PROBE / WINDOW CONNECTED`。
+3. 打开 iPhone“文件”App →“我的 iPhone”→ VLC，导出 `CarPlayProbe.log`。如果没有该文件，也记录这一点。
+4. 再解压并安装 **window-probe** ZIP 中的 IPA，重复步骤 1–3。第二次安装会替换第一次的包。
 
-1. 用 TrollStore 安装 IPA，记录成功或完整错误信息；在 iPhone 启动应用，确认原有 VLC 界面出现。
-2. 连接 CarPlay，记录 VLC 图标是否出现、现有音频模板是否可打开，以及车机上是否出现 `VLC CarPlay display probe` 静态字样。分别测试有线和无线。
-3. 断开、重连一次，记录有无闪退、黑屏或重复窗口。若可以取得 iPhone 系统日志，筛选 `VLC CarPlay` 和 `VLC CarPlay video probe` 相关行；不要上传完整媒体 URL 或私人文件路径。
+若车机显示原有“艺术家 / 流派 / 网络 / 播放列表”页面，那是音频模板，并非视频窗口。若打开后无内容，保持 VLC 在 iPhone 前台再试一次。分别记录安装错误、崩溃、重连后的变化；分享车机照片和 `CarPlayProbe.log` 即可，不需要导出媒体库或完整系统日志。
 
-若车机黑屏，先让 iPhone 保持解锁、屏幕点亮，并把 VLC 留在前台，再从车机打开 VLC；记录画面是否变化。新版探测包会在 VLC 的 Documents 中写入 `CarPlayProbe.log`，仅含手机、音频模板与视频窗口 Scene 生命周期和窗口尺寸。可尝试从 iPhone“文件”App 的“我的 iPhone”下 VLC 目录导出该文件；请只分享这个探测日志，不要分享整个 VLC 媒体库或完整系统日志。
-
-请返回 iPhone 型号、TrollStore 版本、安装结果、车机照片或截图，以及出现问题的准确步骤。静态字样出现仅说明窗口可绘制，不说明系统允许视频或 VLC 已输出视频帧。
-
-逐项记录：
-
-1. IPA 是否可经 TrollStore 安装和启动，签名后实际 entitlement 是什么。
-2. 连接 CarPlay 后是否出现 VLC 入口，现有音频模板是否正常。
-3. 系统是否创建视频 Scene，并提供可用显示窗口。
-4. 驻车且系统允许时是否显示测试画面及真实 VLC 视频帧。
-
-任一步失败都保留诊断日志，不修改车辆安全状态或绕过系统视频限制。
+静态探测字样出现只证明窗口可绘制。真实 VLC 视频帧与驻车条件下的系统视频许可仍需后续验证；不修改车辆安全状态或绕过系统限制。
