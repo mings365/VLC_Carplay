@@ -10,6 +10,8 @@
 2. 连接 CarPlay，记录 VLC 图标是否出现、现有音频模板是否可打开，以及车机上是否出现 `VLC CarPlay display probe` 静态字样。分别测试有线和无线。
 3. 断开、重连一次，记录有无闪退、黑屏或重复窗口。若可以取得 iPhone 系统日志，筛选 `VLC CarPlay` 和 `VLC CarPlay video probe` 相关行；不要上传完整媒体 URL 或私人文件路径。
 
+若车机黑屏，先让 iPhone 保持解锁、屏幕点亮，并把 VLC 留在前台，再从车机打开 VLC；记录画面是否变化。新版探测包会在 VLC 的 Documents 中写入 `CarPlayProbe.log`，仅含手机、音频模板与视频窗口 Scene 生命周期和窗口尺寸。可尝试从 iPhone“文件”App 的“我的 iPhone”下 VLC 目录导出该文件；请只分享这个探测日志，不要分享整个 VLC 媒体库或完整系统日志。
+
 请返回 iPhone 型号、TrollStore 版本、安装结果、车机照片或截图，以及出现问题的准确步骤。静态字样出现仅说明窗口可绘制，不说明系统允许视频或 VLC 已输出视频帧。
 
 逐项记录：

@@ -22,3 +22,5 @@
 另增独立的 TrollStore 探测包签名工作流，只给主可执行文件写入 audio 与 `SBStarkCapable` 两项 entitlement；该包是否可安装、Scene 是否连接仍待分别测试。
 
 探测版 [build run 41545593078](https://github.com/mings365/VLC_Carplay/actions/runs/41545593078) 成功；[sign run 41546362321](https://github.com/mings365/VLC_Carplay/actions/runs/41546362321) 成功并上传 `vlc-carplay-window-probe-trollstore-ipa`。签名日志确认两项 entitlement 为 `true`、主可执行文件仍是 arm64 Mach-O、IPA 压缩结构校验通过。实机安装、CarPlay Scene 和静态画面均未验证。
+
+用户实机反馈：iOS 16.5.1 上安装后车机有 VLC 图标，但打开全黑；CarTube 同机同车正常，VLC 黑屏时似乎不在手机前台。已开始第二轮诊断：将测试窗口背景改为深蓝、文字改为大号，并把手机、音频模板、视频 Scene 生命周期和窗口状态写入 Documents 的 `CarPlayProbe.log`。当前尚不能判断黑屏是 Scene 未连接、窗口未显示还是前台状态造成。

@@ -13,6 +13,7 @@
 #import "VLCAppSceneDelegate.h"
 #import "VLCAppDelegate.h"
 #import "VLC-Swift.h"
+#import "../../CarPlay/VLCCarPlayProbeDiagnostics.h"
 
 @interface VLCAppSceneDelegate () <UISceneDelegate>
 {
@@ -25,6 +26,7 @@
 - (void)scene:(UIScene *)scene willConnectToSession:(UISceneSession *)session
       options:(UISceneConnectionOptions *)connectionOptions
 {
+    VLCCarPlayProbeRecord(@"phone scene connected");
     [VLCAppearanceManager setupAppearanceWithTheme:PresentationTheme.current];
 
     UIWindow *window = [[UIWindow alloc] initWithWindowScene:(UIWindowScene *)scene];
@@ -62,6 +64,7 @@
 
 - (void)sceneDidBecomeActive:(UIScene *)scene
 {
+    VLCCarPlayProbeRecord(@"phone scene active");
     UIApplication *sharedApplication = [UIApplication sharedApplication];
     VLCAppDelegate *appDelegate = (VLCAppDelegate *)sharedApplication.delegate;
     [appDelegate applicationDidBecomeActive:sharedApplication];
@@ -69,6 +72,7 @@
 
 - (void)sceneWillResignActive:(UIScene *)scene
 {
+    VLCCarPlayProbeRecord(@"phone scene resign active");
     UIApplication *sharedApplication = [UIApplication sharedApplication];
     VLCAppDelegate *appDelegate = (VLCAppDelegate *)sharedApplication.delegate;
     [appDelegate applicationWillResignActive:sharedApplication];
@@ -80,6 +84,7 @@
 
 - (void)sceneDidEnterBackground:(UIScene *)scene
 {
+    VLCCarPlayProbeRecord(@"phone scene background");
     UIApplication *sharedApplication = [UIApplication sharedApplication];
     VLCAppDelegate *appDelegate = (VLCAppDelegate *)sharedApplication.delegate;
     [appDelegate validatePasscodeIfNeededWithCompletion:^{}];

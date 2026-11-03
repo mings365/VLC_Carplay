@@ -11,6 +11,7 @@
  *****************************************************************************/
 
 #import "VLCCarPlaySceneDelegate.h"
+#import "VLCCarPlayProbeDiagnostics.h"
 
 #import <CarPlay/CarPlay.h>
 
@@ -45,7 +46,7 @@
 - (void)templateApplicationScene:(CPTemplateApplicationScene *)templateApplicationScene
    didConnectInterfaceController:(CPInterfaceController *)interfaceController
 {
-    NSLog(@"VLC CarPlay audio template scene connected");
+    VLCCarPlayProbeRecord(@"audio template connected");
     _interfaceController = interfaceController;
     _mediaLibraryObserver = [[CarPlayMediaLibraryObserver alloc] init];
     _mediaLibraryObserver.observerDelegate = self;
@@ -70,7 +71,7 @@
 - (void)templateApplicationScene:(CPTemplateApplicationScene *)templateApplicationScene
 didDisconnectInterfaceController:(CPInterfaceController *)interfaceController
 {
-    NSLog(@"VLC CarPlay audio template scene disconnected");
+    VLCCarPlayProbeRecord(@"audio template disconnected");
     _interfaceController = nil;
     [_mediaLibraryObserver unobserveLibrary];
     _mediaLibraryObserver = nil;
