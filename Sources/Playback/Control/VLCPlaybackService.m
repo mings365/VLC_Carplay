@@ -2324,7 +2324,7 @@ static const NSInteger kVLCPreampLevelMinimum = -12;
 #else
     BOOL hasExternalWindow = [VLCAppCoordinator sharedInstance].externalWindow != nil;
 #if TARGET_OS_IOS
-    return (_renderer || hasExternalWindow || _carPlayVideoOutputView != nil);
+    return (_renderer || hasExternalWindow);
 #else
     return hasExternalWindow;
 #endif
@@ -2338,6 +2338,9 @@ static const NSInteger kVLCPreampLevelMinimum = -12;
     [self savePlaybackState];
 
     if (![self isPlayingOnExternalScreen]
+#if TARGET_OS_IOS
+        && !_carPlayVideoOutputView
+#endif
         && ![[[NSUserDefaults standardUserDefaults] objectForKey:kVLCSettingContinueAudioInBackgroundKey] boolValue]) {
         if ([_mediaPlayer isPlaying]) {
             [_mediaPlayer pause];
