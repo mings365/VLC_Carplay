@@ -32,3 +32,7 @@
 用户的仅 Stark 探测包实机照片显示深蓝白字 `WINDOW CONNECTED`。`CarPlayProbe.log` 记录 `UIWindowSceneSessionRoleCarPlay` 成功连接、窗口尺寸 640×240、窗口可见且 Scene 激活；手机 Scene 随后进入后台。由此确认当前设备上的独立窗口路径可用，但尚未验证视频帧。下一阶段复用 `VLCPlaybackService` 的单一渲染视图，在用户驻车确认后将输出目标迁移至该窗口，并在 Scene 停用或断开时解绑、返回手机显示。此实验仍缺少系统车辆运动状态接口，不能当作自动驻车检测或正式安全能力。
 
 视频输出实验代码的 [build run 41575627700](https://github.com/mings365/VLC_Carplay/actions/runs/41575627700) 成功，随后 [sign run 41586471716](https://github.com/mings365/VLC_Carplay/actions/runs/41586471716) 成功生成两个 TrollStore IPA。用户曾安装 build run 的 unsigned 中间 IPA，车机 VLC 图标消失；签名产物尚待实机验证。
+
+用户报告安装签名视频实验包后，CarPlay 车机**可以播放视频**。这确认至少一条 VLC 视频渲染路径在 iOS 16.5.1 实机上可用。用户本次附带的 `D:\CarPlayProbe.log` 仍是旧静态探针日志（最后事件为 02:53:38Z 的 `video scene disconnected`，没有新版 `video output attach requested`），因此该文件无法验证本次播放绑定、声音或断开恢复；这些仍待新日志与实机结果确认。不得把用户报告扩展成字幕、音轨、协议、行驶状态或原 CarPlay 音频功能已验证。
+
+用户补充确认：视频画面和声音均正常，iPhone 熄屏后仍继续播放；断开 CarPlay 后能否返回手机尚未测试。当前签名包依赖 TrollStore 保留 `SBStarkCapable`；普通 Apple ID 侧载和未装 TrollStore 的 iPhone 尚无可用的此旧版窗口安装路径。unsigned 包失去车机入口是本机对照观察，不等同于穷尽所有其他系统/签名方式。
