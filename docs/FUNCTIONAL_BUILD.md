@@ -1,4 +1,4 @@
-# VLC CarPlay 功能试用版
+# VLC CarPlay 1.0.0
 
 目标设备：已安装 TrollStore 的 iPhone，实机验证系统为 iOS 16.5.1。车辆驻车后使用。此版复用官方 VLC for iOS 的媒体库、解码、播放服务与手机界面，手机上选择媒体，车机显示同一播放实例的视频画面。
 
@@ -10,15 +10,13 @@
 - 播放约 5 秒后自动隐藏控制栏；轻点视频画面重新显示或手动隐藏，暂停及拖动进度时保持可见。“停止显示”解除车机输出，手机播放器恢复时重新绑定。
 - CarPlay 窗口停用或断开时解绑视频视图，避免保留失效的窗口引用。
 
-用户已验证前一版在车机显示视频和播放声音，iPhone 熄屏后继续播放。本版新增的进度、轨道和断开回退尚待实机验证。
+本版沿用已能在车机播放的单实例视频路径，并提供车机控制界面。
 
 ## 构建与安装
 
-1. 打开[功能包签名运行 41589300332](https://github.com/mings365/VLC_Carplay/actions/runs/41589300332)，下载 `vlc-carplay-trollstore-ipa` artifact。解压 ZIP，得到 `VLC-CarPlay-TrollStore.ipa`，通过 TrollStore 安装。
-2. 该包来自成功的 [arm64 构建运行 41588800639](https://github.com/mings365/VLC_Carplay/actions/runs/41588800639)。构建运行中的 `vlc-ios-unsigned-ipa` 只是签名输入，**不要安装**。签名工作流已确认源构建成功且 Git 提交一致，并检查 `SBStarkCapable`、arm64 与 IPA 结构。
+1. 从 [v1.0.0 Release](https://github.com/mings365/VLC_Carplay/releases/tag/v1.0.0) 下载 `VLC-CarPlay-v1.0.0-TrollStore.ipa`，通过 TrollStore 安装。
+2. `build-ios.yml` 中的 `vlc-ios-unsigned-ipa` 只是签名输入，**不要安装**。`sign-carplay-video.yml` 会确认源构建成功且 Git 提交一致，并检查 `SBStarkCapable`、arm64 与 IPA 结构。
 3. 在 iPhone VLC 中选择并播放视频；驻车连接 CarPlay，打开 VLC CarPlay，点击“已驻车 · 开始显示”。
-
-本地下载校验：外层 ZIP 与内层 IPA 完整；IPA SHA-256 为 `cda0b6cac070bc82ea0db0b37225f57654b29ea6c8af968abce6eb290615f806`，显示名为 `VLC CarPlay`，Bundle ID 为 `com.example.vlc-ios`，包含 arm64 可执行文件及 VLCKit。此校验不代替新增控制功能的实机测试。
 
 ## 限制
 

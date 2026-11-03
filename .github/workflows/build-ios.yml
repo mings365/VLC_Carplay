@@ -87,6 +87,7 @@ jobs:
           test -d "$APP"
           EXECUTABLE=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleExecutable' "$APP/Info.plist")
           test -n "$EXECUTABLE"
+          /usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$APP/Info.plist" | grep -qx '1.0.0'
           test -s "$APP/$EXECUTABLE"
           file "$APP/$EXECUTABLE" | tee "$ARTIFACT_DIR/executable.txt"
           xcrun lipo "$APP/$EXECUTABLE" -verify_arch arm64

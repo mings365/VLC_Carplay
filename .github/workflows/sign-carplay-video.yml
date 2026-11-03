@@ -53,6 +53,8 @@ jobs:
           unzip -q "$RUNNER_TEMP/unsigned/VLC-iOS-unsigned.ipa" -d "$RUNNER_TEMP/video"
           APP="$RUNNER_TEMP/video/Payload/VLC-iOS-no-watch.app"
           EXECUTABLE=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleExecutable' "$APP/Info.plist")
+          VERSION=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$APP/Info.plist")
+          test "$VERSION" = '1.0.0'
           test -s "$APP/$EXECUTABLE"
           test -s "$APP/Frameworks/VLCKit.framework/VLCKit"
           ldid -S.github/VLCCarPlayVideo.entitlements "$APP/$EXECUTABLE"
@@ -65,7 +67,7 @@ jobs:
           xcrun lipo "$APP/$EXECUTABLE" -verify_arch arm64
           (cd "$RUNNER_TEMP/video" && zip -qry "$RUNNER_TEMP/VLC-CarPlay-TrollStore.ipa" Payload)
           unzip -t "$RUNNER_TEMP/VLC-CarPlay-TrollStore.ipa" | tail -1
-          echo "Install the IPA from the vlc-carplay-trollstore-ipa artifact with TrollStore. The unsigned build artifact is not installable as a CarPlay video app." >> "$GITHUB_STEP_SUMMARY"
+          echo "VLC CarPlay $VERSION: install the signed IPA from the vlc-carplay-trollstore-ipa artifact with TrollStore. The unsigned build artifact is not installable as a CarPlay video app." >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload TrollStore IPA
         uses: actions/upload-artifact@v4

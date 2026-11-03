@@ -1,153 +1,32 @@
-<h3 align="center">
-  <a href="https://www.videolan.org/images/vlc-ios/readme_banner.png">
-  <img src="https://www.videolan.org/images/vlc-ios/readme_banner.png?raw=true" alt="VLC-iOS banner">
-  </a>
-</h3>
+# VLC CarPlay
 
-This is the official mirror repository of VLC for iOS and tvOS application.
+[English](README.en.md) · [下载 v1.0.0](https://github.com/mings365/VLC_Carplay/releases/tag/v1.0.0)
 
-_You can find the official repository [here](https://code.videolan.org/videolan/vlc-ios/)._
+基于 [VLC for iOS](https://code.videolan.org/videolan/vlc-ios/) 开发的非官方分支，让 iPhone 中的 VLC 视频在 CarPlay 车机屏幕上播放。沿用 VLC 的媒体库、播放服务和解码能力，不另建播放器。
 
-It's currently written in Objective-C / Swift and uses [VLCKit](https://code.videolan.org/videolan/VLCKit), a libvlc wrapper.
+## 功能
 
-- [Requirements](#requirements)
-- [Building](#building)
-  - [VLC-iOS](#vlc-ios)
-  - [Custom VLCKit](#custom-vlckit)
-  - [Beginner's Guide](#beginners-guide)
-- [Contribute](#contribute)
-  - [Pull request](#pull-request)
-  - [Commit](#commit)
-  - [Gitlab issues](#gitlab-issues)
-- [Communication](#communication)
-  - [Forum](#forum)
-  - [Issues](#issues)
-- [Code of Conduct](#code-of-conduct)
-- [License](#license)
-- [More](#more)
+- 在 iPhone VLC CarPlay 中选择本地视频或媒体来源，在车机上显示画面并输出声音。
+- 车机上播放/暂停、切换上一项和下一项、查看及跳转进度、切换已有字幕和音轨。
+- 播放时自动收起控制栏，轻点画面可再次显示；也可主动停止车机显示。
+- iPhone 熄屏后继续播放，CarPlay 窗口断开时释放车机视频视图。
 
-## Requirements
-* Xcode 11.0+
-* macOS 10.12+
-* Cocoapods 1.4+
+## 安装条件
 
-## Building
+此版本使用 iOS 旧版 CarPlay 窗口路径，需要 **TrollStore**，或能保留 `SBStarkCapable` 权限的**越狱安装环境**。普通 Apple ID 侧载无法按此方式启用车机视频窗口。越狱环境的签名和权限配置需由使用者自行处理。
 
-### VLC-iOS
+从 [Releases](https://github.com/mings365/VLC_Carplay/releases/tag/v1.0.0) 下载 `VLC-CarPlay-v1.0.0-TrollStore.ipa`，用 TrollStore 安装。`build-ios.yml` 中的 `vlc-ios-unsigned-ipa` 是构建中间产物，**不要直接安装**。
 
-1. Clone VLC-iOS:
+## 使用与限制
 
-    `git clone https://code.videolan.org/videolan/vlc-ios.git`
+1. 在 iPhone 的 VLC CarPlay 中选择并播放视频。
+2. 车辆**驻车**时连接 CarPlay，在车机打开 VLC CarPlay，点“已驻车 · 开始显示”。
+3. 轻点视频画面唤出控制栏；不再需要车机画面时点“停止显示”。
 
-2. Run the command `[sudo] gem install cocoapods` (and then `[sudo] arch -x86_64 gem install ffi` on Apple Silicon devices).    
-3. Run `pod install` (or `arch -x86_64 pod install` on Apple Silicon devices).
-4. Open `VLC.xcworkspace`.
-5. Hit "Build and Run".
+“已驻车”是人工确认，应用不提供自动车辆运动状态检测；请勿在行驶中使用视频功能，也不要绕过车辆或系统的安全限制。车机端目前从手机选择媒体，不提供完整文件浏览。视频签名包不含 CarPlay 音频模板权限；源码仍保留 VLC 原有音频模块。此旧版窗口方案不是 Apple 新系统的官方 CarPlay 视频类别。
 
+## 构建与许可
 
-### Custom VLCKit
+使用 Xcode 打开 `VLC.xcworkspace`，或通过 [build-ios.yml](.github/workflows/build-ios.yml) 构建 arm64 IPA，再通过 [sign-carplay-video.yml](.github/workflows/sign-carplay-video.yml) 签名。详细步骤见 [安装说明](docs/TROLLSTORE_INSTALL.md)。
 
-Mostly for debugging or advanced users, you might want to have a custom local VLCKit build.
-
-1. Clone VLCKit:
-
-    `git clone https://code.videolan.org/videolan/VLCKit.git`
-
-
-2. Inside the VLCKit folder, run the following command:
-
-    `./compileAndBuildVLCKit.sh -a ${MYARCH}`
-
-    MYARCH can be `x86_64` or `aarch64`.
-
-    Add `-d` for a debug build (to have valid stack straces and asserts).
-
-    Add `-n` if you want to use you own VLC repository for VLCKit (See [VLCKit README.md](https://code.videolan.org/videolan/VLCKit/blob/master/README.md)).
-
-3. Replace the VLCKit.framework with the one you just built.
-
-    Inside your vlc-ios folder, after a `pod update`, do:
-
-    `cd Pods/VLCKit`
-
-    `rm -rf VLCKit.xcframework`
-
-    `ln -s ${VLCKit}/build/VLCKit.xcframework`
-
-4. Hit "Build and Run".
-
-### Beginner's Guide
-
-Can't get your project to build or run? Head over to the [beginner's guide](https://code.videolan.org/videolan/vlc-ios/wikis/Beginner-Guide) for help on common issues beginners tend to run into.
-
-If you can't find your problem on the guide, please feel free to [submit an issue](https://code.videolan.org/videolan/vlc-ios/issues).
-
-## Contribute
-
-### Pull request
-
-Pull requests are more than welcome! If you do submit one, please make sure to use a descriptive title and description.
-
-### Commit
-
-We try to follow a simple set of rules, outlined by this [guide](https://chris.beams.io/posts/git-commit/).
-
-Additionally, commit messages should have all the information needed to understand the commit easily as the following:
-
-```
-    Subject: Brief description
-
-    Description in detail if needed.
-
-    ticket related action
-```
-
-For example:
-
-```
-    UPnP: Remove iOS 7 compatibility code
-
-    Closes #166
-```
-
-Further rules can be found on this [Coding Style](./Documentation/CodingStyle.md) guide.
-
-### Gitlab issues
-
-You can look through issues we currently have on the [VideoLAN GitLab](https://code.videolan.org/videolan/vlc-ios/issues).
-
-A [beginner friendly](https://code.videolan.org/videolan/vlc-ios/issues?label_name%5B%5D=Beginner+friendly) tag is available if you don't know where to start.
-
-## Communication
-
-### Forum
-
-If you have any question or if you're not sure it's actually an issue, please visit our [forum](https://forum.videolan.org/).
-
-### Issues
-
-You have encountered an issue and wish to report it to the VLC dev team?
-
-You can create one on our [GitLab](https://code.videolan.org/videolan/vlc-ios/issues).
-
-Before creating an issue or ticket, please double check for duplicates!
-
-Two templates are provided helping you report an issue and request a feature.
-
-Each section of the template should contain at least one meaningful sentence in order to guarantee a proper understanding of the ticket.
-
-## Code of Conduct
-
-Please read and follow the [VideoLAN CoC](https://wiki.videolan.org/Code_of_Conduct/).
-
-## License
-
-VLC-iOS is under the GPLv2 (or later) and the MPLv2 license.
-
-See [COPYING](./COPYING) for more license info.
-
-## More
-
-For everything else, check our [wiki](https://wiki.videolan.org/) or our [support page](http://www.videolan.org/support/).
-
-We're happy to help!
+本项目不是 VideoLAN 官方发布。原项目与本分支保留的源码和许可信息见 [COPYING](COPYING)；感谢 VideoLAN 与 VLC for iOS 贡献者。
