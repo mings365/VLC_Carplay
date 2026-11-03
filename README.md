@@ -6,7 +6,7 @@
 
 ## English
 
-VLC CarPlay is an unofficial fork of [VLC for iOS](https://code.videolan.org/videolan/vlc-ios/) that displays videos from the iPhone app on a CarPlay screen. It reuses VLC's media library, playback service, and decoder.
+VLC CarPlay is an unofficial fork of [VLC for iOS](https://code.videolan.org/videolan/vlc-ios/) that brings video playback to CarPlay on **iOS versions before 27** through a legacy window path. It reuses VLC's media library, playback service, and decoder.
 
 ### Features
 
@@ -17,7 +17,7 @@ VLC CarPlay is an unofficial fork of [VLC for iOS](https://code.videolan.org/vid
 
 ### Install
 
-This legacy CarPlay window path requires **TrollStore** or a **jailbroken installation environment** that preserves the `SBStarkCapable` entitlement. Ordinary Apple ID sideloading cannot enable this car video window. Jailbroken installations require their own signing and entitlement setup.
+This legacy CarPlay window path requires **TrollStore** or a **jailbroken installation environment** that preserves the `SBStarkCapable` entitlement. Ordinary Apple ID sideloading cannot enable this car video window. A jailbreak alone does not guarantee compatibility; its signing setup and the connected car must also allow the window.
 
 Download `VLC-CarPlay-v1.0.0-TrollStore.ipa` from [Releases](https://github.com/mings365/VLC_Carplay/releases/tag/v1.0.0) and install it with TrollStore. Do **not** install the `vlc-ios-unsigned-ipa` build artifact; it is only used by the signing workflow.
 
@@ -27,7 +27,9 @@ Download `VLC-CarPlay-v1.0.0-TrollStore.ipa` from [Releases](https://github.com/
 2. While **parked**, connect to CarPlay, open VLC CarPlay on the car screen, and tap “已驻车 · 开始显示” (Parked · Start Display).
 3. Tap the video to show the controls. Tap “停止显示” (Stop Display) to end car video output.
 
-The parked confirmation is manual; the app does not detect vehicle motion. Do not use video while driving or bypass vehicle or system safety restrictions. Media selection currently happens on the iPhone. The video IPA does not include the CarPlay audio-template entitlement, although VLC's original audio module remains in the source. This legacy window approach is separate from Apple's newer official CarPlay video category.
+The parked confirmation is manual; the app does not detect vehicle motion. Do not use video while driving or bypass vehicle or system safety restrictions. Media selection currently happens on the iPhone. The video IPA does not include the CarPlay audio-template entitlement, although VLC's original audio module remains in the source. Compatibility with every iOS version below 27 or every car is not guaranteed.
+
+Starting with **iOS 27**, Apple introduced an [official CarPlay video app category](https://developer.apple.com/videos/play/wwdc2026/212/) for supported vehicles when video is available while parked. It requires AirPlay video streaming and official CarPlay integration, and is separate from this project's legacy window path.
 
 ### Build and license
 
@@ -41,7 +43,7 @@ This is not an official VideoLAN release. See [COPYING](COPYING) for source lice
 
 ## 简体中文
 
-VLC CarPlay 是基于 [VLC for iOS](https://code.videolan.org/videolan/vlc-ios/) 开发的非官方分支，让 iPhone 中的 VLC 视频显示在 CarPlay 车机屏幕上。它沿用 VLC 的媒体库、播放服务和解码能力。
+VLC CarPlay 是基于 [VLC for iOS](https://code.videolan.org/videolan/vlc-ios/) 开发的非官方分支，主要面向 **iOS 27 以前的系统**，通过旧版窗口路径让 VLC 视频显示在 CarPlay 车机屏幕上。它沿用 VLC 的媒体库、播放服务和解码能力。
 
 ### 功能
 
@@ -52,7 +54,7 @@ VLC CarPlay 是基于 [VLC for iOS](https://code.videolan.org/videolan/vlc-ios/)
 
 ### 安装
 
-此旧版 CarPlay 窗口路径需要 **TrollStore**，或能保留 `SBStarkCapable` 权限的**越狱安装环境**。普通 Apple ID 侧载无法启用该车机视频窗口；越狱安装需自行配置签名及权限。
+此旧版 CarPlay 窗口路径需要 **TrollStore**，或能保留 `SBStarkCapable` 权限的**越狱安装环境**。普通 Apple ID 侧载无法启用该车机视频窗口。仅有越狱并不保证可用，还取决于签名权限及车机是否提供窗口。
 
 从 [Releases](https://github.com/mings365/VLC_Carplay/releases/tag/v1.0.0) 下载 `VLC-CarPlay-v1.0.0-TrollStore.ipa`，用 TrollStore 安装。`vlc-ios-unsigned-ipa` 只是签名工作流的中间产物，**不要直接安装**。
 
@@ -62,7 +64,9 @@ VLC CarPlay 是基于 [VLC for iOS](https://code.videolan.org/videolan/vlc-ios/)
 2. 车辆**驻车**时连接 CarPlay，在车机打开 VLC CarPlay，点“已驻车 · 开始显示”。
 3. 轻点画面唤出控制栏；不再需要车机画面时点“停止显示”。
 
-“已驻车”是人工确认，应用没有自动车辆运动状态检测。请勿在行驶中使用视频功能，也不要绕过车辆或系统安全限制。媒体目前通过手机选择。视频 IPA 不含 CarPlay 音频模板权限，但源码仍保留 VLC 原有音频模块。此旧版窗口方案与 Apple 新系统的官方 CarPlay 视频类别不同。
+“已驻车”是人工确认，应用没有自动车辆运动状态检测。请勿在行驶中使用视频功能，也不要绕过车辆或系统安全限制。媒体目前通过手机选择。视频 IPA 不含 CarPlay 音频模板权限，但源码仍保留 VLC 原有音频模块。不能保证所有低于 iOS 27 的系统和车型都适用。
+
+Apple 从 **iOS 27** 开始提供[官方 CarPlay 视频应用类别](https://developer.apple.com/videos/play/wwdc2026/212/)，仅在支持车载视频且允许驻车播放的车辆上使用，应用还需支持 AirPlay 视频流及官方 CarPlay 集成。本项目使用的是与之不同的旧版窗口路径。
 
 ### 构建与许可
 
