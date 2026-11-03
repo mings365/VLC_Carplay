@@ -30,3 +30,5 @@
 第二轮诊断代码的 [build run 41555116850](https://github.com/mings365/VLC_Carplay/actions/runs/41555116850) 成功；[sign run 41555816429](https://github.com/mings365/VLC_Carplay/actions/runs/41555816429) 成功上传 audio+Stark 和仅 Stark 两个对照 IPA。仅 Stark 包的签名脚本确认没有 CarPlay audio entitlement。等待用户实机比较及 `CarPlayProbe.log`。
 
 用户的仅 Stark 探测包实机照片显示深蓝白字 `WINDOW CONNECTED`。`CarPlayProbe.log` 记录 `UIWindowSceneSessionRoleCarPlay` 成功连接、窗口尺寸 640×240、窗口可见且 Scene 激活；手机 Scene 随后进入后台。由此确认当前设备上的独立窗口路径可用，但尚未验证视频帧。下一阶段复用 `VLCPlaybackService` 的单一渲染视图，在用户驻车确认后将输出目标迁移至该窗口，并在 Scene 停用或断开时解绑、返回手机显示。此实验仍缺少系统车辆运动状态接口，不能当作自动驻车检测或正式安全能力。
+
+视频输出实验代码的 [build run 41575627700](https://github.com/mings365/VLC_Carplay/actions/runs/41575627700) 成功，随后 [sign run 41586471716](https://github.com/mings365/VLC_Carplay/actions/runs/41586471716) 成功生成两个 TrollStore IPA。用户曾安装 build run 的 unsigned 中间 IPA，车机 VLC 图标消失；签名产物尚待实机验证。
