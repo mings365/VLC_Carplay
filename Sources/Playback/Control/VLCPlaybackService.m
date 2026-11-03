@@ -90,6 +90,9 @@ static const NSInteger kVLCPreampLevelMinimum = -12;
     UIView *_videoOutputViewWrapper API_UNAVAILABLE(watchos);
     UIView *_actualVideoOutputView API_UNAVAILABLE(watchos);
     UIView *_preBackgroundWrapperView API_UNAVAILABLE(watchos);
+#if TARGET_OS_IOS
+    UIView *_carPlayVideoOutputView;
+#endif
 
     int _majorPositionChangeInProgress;
     float _positionToRestore;
@@ -123,6 +126,7 @@ static const NSInteger kVLCPreampLevelMinimum = -12;
 @property (weak, atomic) id<VLCPictureInPictureWindowControlling> pipController;
 @property (atomic) BOOL isPipEnabled;
 @property (atomic) id<VLCPictureInPictureMediaControlling> mediaController;
+- (void)updateVideoOutputView;
 #endif
 
 @end
@@ -1529,26 +1533,56 @@ static const NSInteger kVLCPreampLevelMinimum = -12;
 - (void)setVideoOutputView:(UIView *)videoOutputView
 {
     dispatch_async(dispatch_get_main_queue(), ^{
-        if (videoOutputView) {
-            if ([self->_actualVideoOutputView superview] != nil)
-                [self->_actualVideoOutputView removeFromSuperview];
-
-            self->_actualVideoOutputView.frame = (CGRect){CGPointZero, videoOutputView.frame.size};
-
-            [videoOutputView addSubview:self->_actualVideoOutputView];
-            [self->_actualVideoOutputView layoutSubviews];
-            [self->_actualVideoOutputView updateConstraints];
-            [self->_actualVideoOutputView setNeedsLayout];
-        } else
-            [self->_actualVideoOutputView removeFromSuperview];
-
         self->_videoOutputViewWrapper = videoOutputView;
+        [self updateVideoOutputView];
     });
 }
 
 - (UIView *)videoOutputView
 {
     return _videoOutputViewWrapper;
+}
+
+#if TARGET_OS_IOS
+- (void)setCarPlayVideoOutputView:(UIView *)carPlayVideoOutputView
+{
+    dispatch_async(dispatch_get_main_queue(), ^{
+        self->_carPlayVideoOutputView = carPlayVideoOutputView;
+        [self updateVideoOutputView];
+    });
+}
+
+- (UIView *)carPlayVideoOutputView
+{
+    return _carPlayVideoOutputView;
+}
+#endif
+
+- (void)updateVideoOutputView
+{
+    UIView *target = _videoOutputViewWrapper;
+#if TARGET_OS_IOS
+    if (_carPlayVideoOutputView) {
+        target = _carPlayVideoOutputView;
+    }
+#endif
+    if (_actualVideoOutputView.superview != target) {
+        [_actualVideoOutputView removeFromSuperview];
+    }
+    if (!target) {
+        return;
+    }
+
+    if (!_actualVideoOutputView) {
+        _actualVideoOutputView = [[UIView alloc] initWithFrame:target.bounds];
+        _actualVideoOutputView.autoresizesSubviews = YES;
+    }
+    _actualVideoOutputView.frame = target.bounds;
+    _actualVideoOutputView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    if (_actualVideoOutputView.superview != target) {
+        [target addSubview:_actualVideoOutputView];
+    }
+    [_actualVideoOutputView setNeedsLayout];
 }
 
 #endif
@@ -2290,7 +2324,7 @@ static const NSInteger kVLCPreampLevelMinimum = -12;
 #else
     BOOL hasExternalWindow = [VLCAppCoordinator sharedInstance].externalWindow != nil;
 #if TARGET_OS_IOS
-    return (_renderer || hasExternalWindow);
+    return (_renderer || hasExternalWindow || _carPlayVideoOutputView != nil);
 #else
     return hasExternalWindow;
 #endif

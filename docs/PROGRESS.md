@@ -28,3 +28,5 @@
 用户随后提供的车机照片表明：实际出现的是 VLC 原有音频模板（艺术家、流派、网络、播放列表），深色区域是音频列表内容区；新增的视频窗口 Scene 没有可见呈现。为排除音频类别优先被系统选择的问题，签名流程增加第二个仅含 `SBStarkCapable` 的独立对照 IPA，正式工程的 CarPlay 音频源码和原 entitlement 保持不变。
 
 第二轮诊断代码的 [build run 41555116850](https://github.com/mings365/VLC_Carplay/actions/runs/41555116850) 成功；[sign run 41555816429](https://github.com/mings365/VLC_Carplay/actions/runs/41555816429) 成功上传 audio+Stark 和仅 Stark 两个对照 IPA。仅 Stark 包的签名脚本确认没有 CarPlay audio entitlement。等待用户实机比较及 `CarPlayProbe.log`。
+
+用户的仅 Stark 探测包实机照片显示深蓝白字 `WINDOW CONNECTED`。`CarPlayProbe.log` 记录 `UIWindowSceneSessionRoleCarPlay` 成功连接、窗口尺寸 640×240、窗口可见且 Scene 激活；手机 Scene 随后进入后台。由此确认当前设备上的独立窗口路径可用，但尚未验证视频帧。下一阶段复用 `VLCPlaybackService` 的单一渲染视图，在用户驻车确认后将输出目标迁移至该窗口，并在 Scene 停用或断开时解绑、返回手机显示。此实验仍缺少系统车辆运动状态接口，不能当作自动驻车检测或正式安全能力。

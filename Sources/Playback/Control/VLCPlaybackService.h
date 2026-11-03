@@ -68,6 +68,9 @@ NS_SWIFT_NAME(PlaybackService)
 @interface VLCPlaybackService : NSObject
 
 @property (nonatomic, strong, nullable) UIView *videoOutputView API_UNAVAILABLE(watchos);
+#if TARGET_OS_IOS
+@property (nonatomic, strong, nullable) UIView *carPlayVideoOutputView;
+#endif
 
 @property (nonatomic, retain) VLCMediaList *mediaList;
 @property (nonatomic, retain) VLCMediaList *shuffledList;
