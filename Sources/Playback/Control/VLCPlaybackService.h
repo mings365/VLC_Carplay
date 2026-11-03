@@ -96,7 +96,7 @@ NS_SWIFT_NAME(PlaybackService)
 @property (nonatomic, readwrite) float playbackRate; // default = 1.0
 @property (nonatomic, readonly) CGFloat defaultPlaybackRate; // user-configured default speed
 @property (nonatomic, readwrite) float audioDelay; // in milliseconds, default = 0.0
-@property (nonatomic, readwrite) float playbackPosition; // in seconds, default = 0.0
+@property (nonatomic, readwrite) float playbackPosition; // normalized from 0.0 to 1.0
 @property (nonatomic, readwrite) float startPosition; // [0;1] applied when the next media opens, negative to enforce none
 @property (nonatomic, readwrite) float subtitleDelay; // in milliseconds, default = 0.0
 @property (nonatomic, readonly) VLCPlaybackServiceAdjustFilter *adjustFilter;

@@ -10,7 +10,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-	<string>VLC</string>
+	<string>VLC CarPlay</string>
 	<key>CFBundleDocumentTypes</key>
 	<array>
 		<dict>

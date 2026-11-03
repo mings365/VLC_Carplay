@@ -1,0 +1,75 @@
+name: Sign VLC CarPlay for TrollStore
+
+on:
+  workflow_dispatch:
+    inputs:
+      source_run_id:
+        description: Successful unsigned iOS build run ID
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  sign-video:
+    runs-on: macos-26
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify source build
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          curl -fsSL \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/$GITHUB_REPOSITORY/actions/runs/${{ inputs.source_run_id }}" \
+            | jq -e --arg sha "$GITHUB_SHA" '.status == "completed" and .conclusion == "success" and .head_sha == $sha'
+
+      - name: Download unsigned IPA
+        uses: actions/download-artifact@v4
+        with:
+          name: vlc-ios-unsigned-ipa
+          run-id: ${{ inputs.source_run_id }}
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          path: ${{ runner.temp }}/unsigned
+
+      - name: Sign video app
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s "$RUNNER_TEMP/unsigned/VLC-iOS-unsigned.ipa"
+          plutil -lint .github/VLCCarPlayVideo.entitlements
+          if ! command -v ldid >/dev/null; then
+            brew install ldid
+          fi
+          mkdir -p "$RUNNER_TEMP/video"
+          unzip -q "$RUNNER_TEMP/unsigned/VLC-iOS-unsigned.ipa" -d "$RUNNER_TEMP/video"
+          APP="$RUNNER_TEMP/video/Payload/VLC-iOS-no-watch.app"
+          EXECUTABLE=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleExecutable' "$APP/Info.plist")
+          test -s "$APP/$EXECUTABLE"
+          test -s "$APP/Frameworks/VLCKit.framework/VLCKit"
+          ldid -S.github/VLCCarPlayVideo.entitlements "$APP/$EXECUTABLE"
+          ldid -e "$APP/$EXECUTABLE" > "$RUNNER_TEMP/carplay-entitlements.plist"
+          /usr/libexec/PlistBuddy -c 'Print :SBStarkCapable' "$RUNNER_TEMP/carplay-entitlements.plist" | grep -qx true
+          if /usr/libexec/PlistBuddy -c 'Print :com.apple.developer.carplay-audio' "$RUNNER_TEMP/carplay-entitlements.plist" >/dev/null 2>&1; then
+            echo 'Unexpected CarPlay audio entitlement in video app' >&2
+            exit 1
+          fi
+          xcrun lipo "$APP/$EXECUTABLE" -verify_arch arm64
+          (cd "$RUNNER_TEMP/video" && zip -qry "$RUNNER_TEMP/VLC-CarPlay-TrollStore.ipa" Payload)
+          unzip -t "$RUNNER_TEMP/VLC-CarPlay-TrollStore.ipa" | tail -1
+          echo "Install the IPA from the vlc-carplay-trollstore-ipa artifact with TrollStore. The unsigned build artifact is not installable as a CarPlay video app." >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload TrollStore IPA
+        uses: actions/upload-artifact@v4
+        with:
+          name: vlc-carplay-trollstore-ipa
+          path: ${{ runner.temp }}/VLC-CarPlay-TrollStore.ipa
+          if-no-files-found: error
